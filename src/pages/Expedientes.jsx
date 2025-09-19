@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import "./Expedientes.css";
 
-const API = "http://localhost:4000";
+const API = "https://proy-back-production.up.railway.app";
 
 const Expedientes = () => {
   const [expedientes, setExpedientes] = useState([]);

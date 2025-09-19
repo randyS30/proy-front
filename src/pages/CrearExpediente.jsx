@@ -30,7 +30,7 @@ const CrearExpediente = () => {
 
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:4000/api/reniec/${doc}`);
+      const res = await fetch(`https://proy-back-production.up.railway.app/api/reniec/${doc}`);
       const data = await res.json();
 
       if (data.success) {
@@ -58,49 +58,61 @@ const CrearExpediente = () => {
   };
 
   // Guardar expediente
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    const formDataToSend = new FormData();
-    Object.keys(formData).forEach((key) => {
-      if (key !== "archivo") {
-        formDataToSend.append(key, formData[key]);
-      }
-    });
-    if (formData.archivo) {
-      formDataToSend.append("archivo", formData.archivo);
+  const formDataToSend = new FormData();
+  Object.keys(formData).forEach((key) => {
+    if (key !== "archivo") {
+      formDataToSend.append(key, formData[key]);
     }
+  });
+  if (formData.archivo) {
+    formDataToSend.append("archivo", formData.archivo);
+  }
 
-    try {
-      const res = await fetch("http://localhost:4000/api/expedientes", {
+  try {
+    // 👉 Recuperamos el token guardado en el login
+    const token = localStorage.getItem("token");
+
+    const res = await fetch(
+      "https://proy-back-production.up.railway.app/api/expedientes",
+      {
         method: "POST",
+        headers: {
+          // no pongas Content-Type cuando uses FormData, fetch lo agrega automáticamente
+          Authorization: `Bearer ${token}`,
+        },
         body: formDataToSend,
-      });
-
-      const data = await res.json();
-      if (data.success) {
-        alert("✅ Expediente creado correctamente");
-        setFormData({
-          numero_expediente: "",
-          demandante_doc: "",
-          demandante: "",
-          fecha_nacimiento: "",
-          direccion: "",
-          demandado_doc: "",
-          demandado: "",
-          estado: "",
-          fecha_inicio: "",
-          fecha_fin: "",
-          creado_por: "admin",
-          archivo: null,
-        });
-      } else {
-        alert("❌ Error al crear expediente");
       }
-    } catch (err) {
-      console.error("Error creando expediente:", err);
+    );
+
+    const data = await res.json();
+    if (data.success) {
+      alert("✅ Expediente creado correctamente");
+      setFormData({
+        numero_expediente: "",
+        demandante_doc: "",
+        demandante: "",
+        fecha_nacimiento: "",
+        direccion: "",
+        demandado_doc: "",
+        demandado: "",
+        estado: "",
+        fecha_inicio: "",
+        fecha_fin: "",
+        creado_por: "admin",
+        archivo: null,
+      });
+    } else {
+      alert(data.message || "❌ Error al crear expediente");
     }
-  };
+  } catch (err) {
+    console.error("Error creando expediente:", err);
+  }
+};
+
 
   return (
     <div className="p-6 bg-white rounded shadow-md max-w-3xl mx-auto">

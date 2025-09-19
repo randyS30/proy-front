@@ -30,7 +30,7 @@ const Dashboard = () => {
   }
 
   // Cargar dashboard (resumen + estado + usuario)
-  fetch("http://localhost:4000/api/dashboard", {
+  fetch("https://proy-back-production.up.railway.app/api/dashboard", {
     headers: {
       Authorization: `Bearer ${token}`,
     },

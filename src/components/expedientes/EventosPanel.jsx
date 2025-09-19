@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Modal from "../Modal";
 
-const API = "http://localhost:4000";
+const API = "https://proy-back-production.up.railway.app";
 
 export default function EventosPanel({ expedienteId }) {
   const [eventos, setEventos] = useState([]);

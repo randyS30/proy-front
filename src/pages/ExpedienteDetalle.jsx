@@ -5,7 +5,7 @@ import EventosPanel from "../components/expedientes/EventosPanel";
 import ReportesPanel from "../components/expedientes/ReportesPanel";
 import ArchivosPanel from "../components/expedientes/ArchivosPanel";
 
-const API = "http://localhost:4000";
+const API = "https://proy-back-production.up.railway.app";
 
 export default function ExpedienteDetalle() {
   const { id } = useParams();

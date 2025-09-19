@@ -20,7 +20,7 @@ export default function EditarExpediente() {
 
   // Cargar expediente actual
   useEffect(() => {
-    fetch(`http://localhost:4000/api/expedientes/${id}`)
+    fetch(`https://proy-back-production.up.railway.app/api/expedientes/${id}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
@@ -37,7 +37,7 @@ export default function EditarExpediente() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`http://localhost:4000/api/expedientes/${id}`, {
+      const res = await fetch(`https://proy-back-production.up.railway.app/api/expedientes/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),

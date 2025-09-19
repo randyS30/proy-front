@@ -5,7 +5,7 @@ export default function ExpedientesList() {
   const [expedientes, setExpedientes] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:4000/api/expedientes")
+    fetch("https://proy-back-production.up.railway.app/api/expedientes")
       .then((res) => res.json())
       .then((data) => setExpedientes(data.expedientes || []));
   }, []);

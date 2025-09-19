@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const API = "http://localhost:4000";
+const API = "https://proy-back-production.up.railway.app";
 
 export default function ExpedienteInfo({ expediente }) {
   const analizarExpediente = async () => {
