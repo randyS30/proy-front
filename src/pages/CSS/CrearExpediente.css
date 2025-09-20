@@ -1,0 +1,99 @@
+/* Estilos para el contenedor principal */
+.form-container {
+  padding: 1.5rem;
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  max-width: 48rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Título principal del formulario */
+.form-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  text-align: center; /* Centrar el título */
+}
+
+/* Contenedor principal del formulario */
+.form-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* Espacio entre secciones principales */
+}
+
+/* Contenedor para cada grupo de input, agrega el espacio */
+.form-input-group {
+  margin-bottom: 1rem; /* Espacio entre los inputs */
+}
+
+/* Contenedor para cada sección de campos (Ej: Demandante) */
+.form-section {
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  background-color: #f7fafc;
+}
+
+/* Título de cada sección */
+.section-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1a202c;
+  margin-bottom: 1rem;
+}
+
+/* Contenedor para inputs en la misma línea (DNI/CE y botón Buscar) */
+.form-input-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Contenedor para 2 inputs en la misma línea */
+.form-input-duo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+/* Estilo para los inputs */
+.form-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #cbd5e0;
+  border-radius: 0.25rem;
+}
+
+/* Estilo específico para inputs que ocupan la mitad del espacio en una fila */
+.form-input-half {
+  width: 100%;
+}
+
+/* Estilo para las etiquetas de los inputs */
+.form-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #4a5568;
+  margin-bottom: 0.25rem;
+}
+
+/* Botón de Buscar */
+.form-button {
+  flex-shrink: 0;
+  padding: 0.75rem;
+}
+
+/* Botón de Enviar */
+.form-submit-button {
+  width: 100%;
+  background-color: #48bb78;
+  color: white;
+  padding: 0.75rem;
+  border-radius: 0.25rem;
+  text-align: center;
+  cursor: pointer;
+}

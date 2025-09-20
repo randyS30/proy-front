@@ -1,0 +1,130 @@
+/* Estilos específicos para la página de inicio de sesión */
+
+/* Contenedor principal que divide la página en dos */
+.login-form-container {
+  min-height: 80vh;
+  display: flex;
+  background-color: #ffffff; /* Fondo blanco */
+}
+
+/* Columna de la izquierda para el texto y el logo */
+.login-content-left {
+  flex: 1; /* Ocupa la mitad del espacio disponible */
+  
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  text-align: center;
+}
+/* Estilo para la frase debajo del logo */
+.login-content-left p {
+  font-size: 1rem;
+  color: #6c757d; /* Un gris sutil */
+  font-weight: 400;
+  margin-top: 2rem;
+  max-width: 80%; /* Para que el texto no ocupe todo el ancho */
+  line-height: 1.5; /* Espaciado entre líneas para mejor lectura */
+}
+/* Estilo para el título en la izquierda */
+.login-content-left h1 {
+  font-size: 3rem;
+  font-weight: 650;
+  color: #c82333; /* Rojo */
+  margin-bottom: 1rem;
+  
+}
+
+/* Estilo para el logo */
+.login-content-left img {
+  width: 150px; /* Tamaño del logo */
+  height: auto;
+  margin-top: 1rem;
+}
+
+/* Columna de la derecha para el formulario */
+.login-form-right {
+  flex: 1; /* Ocupa la otra mitad del espacio */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Tarjeta o recuadro del formulario de inicio de sesión */
+.login-form-card {
+  background-color: #f8f9fa;
+  padding: 2.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 20rem; /* Más pequeño para que quepa bien en la columna */
+  border: 1px solid #e0e0e0;
+}
+
+/* Título del formulario */
+.login-form-heading {
+  font-size: 1.875rem;
+  font-weight: 800;
+  color: #c82333;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* Resto de estilos del formulario (etiquetas, inputs, botón, error) */
+.login-form-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.login-form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-form-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #333333;
+  margin-bottom: 0.25rem;
+}
+
+.login-form-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: #f0f0f0;
+  color: #333333;
+  border-radius: 0.5rem;
+  border: 1px solid #ccc;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.login-form-input:focus {
+  outline: none;
+  border-color: #c82333;
+  box-shadow: 0 0 0 2px rgba(200, 35, 51, 0.2);
+}
+
+.login-form-button {
+  width: 100%;
+  background-color: #c82333;
+  color: #ffffff;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-form-button:hover {
+  background-color: #a31f2c;
+}
+
+.login-form-error {
+  margin-top: 1rem;
+  color: #c82333;
+  text-align: center;
+  font-size: 0.875rem;
+}

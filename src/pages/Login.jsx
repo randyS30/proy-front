@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import './CSS/Login.css';
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -22,13 +23,11 @@ export default function Login() {
         throw new Error(data.message || "Credenciales inválidas");
       }
 
-      // 👉 Guardamos token y user en localStorage
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
       alert(`Bienvenido ${data.user.nombre}`);
 
-      // Redirige al dashboard
       navigate("/dashboard");
     } catch (err) {
       setError(err.message);
@@ -36,46 +35,56 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-600">
-      <div className="bg-white p-8 rounded-2xl shadow-md w-full max-w-sm">
-        <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
-          Sistema Judicial
-        </h1>
-        <form className="space-y-4" onSubmit={handleSubmit}>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Correo electrónico
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="ejemplo@correo.com"
-              className="mt-1 w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Contraseña
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="********"
-              className="mt-1 w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
-          >
-            Ingresar
-          </button>
-        </form>
-        {error && <p className="mt-3 text-red-600 text-sm">{error}</p>}
+    <div className="login-form-container">
+      {/* Columna de la izquierda para el texto y el logo */}
+      <div className="login-content-left">
+        <h1>Sistema Judicial</h1>
+        <img src="/src/img/logos.png" alt="Logo de Sistema Judicial" />
+         <p>Te ayuda a gestionar y optimizar tus procesos legales de forma eficiente.</p>
+      </div>
+
+      {/* Columna de la derecha para el formulario */}
+      <div className="login-form-right">
+        <div className="login-form-card">
+          <h1 className="login-form-heading">
+            Iniciar Sesión
+          </h1>
+          <form className="login-form-wrapper" onSubmit={handleSubmit}>
+            <div className="login-form-group">
+              <label className="login-form-label">
+                Correo electrónico
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="ejemplo@correo.com"
+                className="login-form-input"
+                required
+              />
+            </div>
+            <div className="login-form-group">
+              <label className="login-form-label">
+                Contraseña
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="********"
+                className="login-form-input"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              className="login-form-button"
+            >
+              Ingresar
+            </button>
+          </form>
+          {error && <p className="login-form-error">{error}</p>}
+        </div>
       </div>
     </div>
   );
