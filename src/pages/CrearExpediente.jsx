@@ -1,8 +1,13 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Button from "../components/Button";
+import { useExpedientes } from '../layouts/ExpedienteContext'; // Importa el hook del contexto
 import './CSS/CrearExpediente.css';
 
 const CrearExpediente = () => {
+  const navigate = useNavigate();
+  const { addExpediente } = useExpedientes(); // Usa la función del contexto
+
   const [formData, setFormData] = useState({
     numero_expediente: "",
     demandante_doc: "",
@@ -14,101 +19,19 @@ const CrearExpediente = () => {
     estado: "",
     fecha_inicio: "",
     fecha_fin: "",
-    creado_por: "admin",
-    archivo: null,
   });
 
-  const [loading, setLoading] = useState(false);
-
-  const consultarReniec = async (tipo) => {
-    const doc = tipo === "demandante" ? formData.demandante_doc : formData.demandado_doc;
-
-    if (!doc || (doc.length !== 8 && doc.length !== 9)) {
-      alert("Documento inválido (DNI: 8 dígitos, CE: 9 dígitos)");
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const res = await fetch(`https://proy-back-production.up.railway.app/api/reniec/${doc}`);
-      const data = await res.json();
-
-      if (data.success) {
-        if (tipo === "demandante") {
-          setFormData((prev) => ({
-            ...prev,
-            demandante: data.nombre || "",
-            fecha_nacimiento: data.fecha_nacimiento || "",
-            direccion: data.direccion || "",
-          }));
-        } else {
-          setFormData((prev) => ({
-            ...prev,
-            demandado: data.nombre || "",
-          }));
-        }
-      } else {
-        alert("⚠️ No se encontró en RENIEC, completa los datos manualmente.");
-      }
-    } catch (err) {
-      console.error("Error RENIEC:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
-    const formDataToSend = new FormData();
-    Object.keys(formData).forEach((key) => {
-      if (key !== "archivo") {
-        formDataToSend.append(key, formData[key]);
-      }
-    });
-    if (formData.archivo) {
-      formDataToSend.append("archivo", formData.archivo);
-    }
-
-    try {
-      const token = localStorage.getItem("token");
-
-      const res = await fetch(
-        "https://proy-back-production.up.railway.app/api/expedientes",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formDataToSend,
-        }
-      );
-
-      const data = await res.json();
-      if (data.success) {
-        alert("✅ Expediente creado correctamente");
-        setFormData({
-          numero_expediente: "",
-          demandante_doc: "",
-          demandante: "",
-          fecha_nacimiento: "",
-          direccion: "",
-          demandado_doc: "",
-          demandado: "",
-          estado: "",
-          fecha_inicio: "",
-          fecha_fin: "",
-          creado_por: "admin",
-          archivo: null,
-        });
-      } else {
-        alert(data.message || "❌ Error al crear expediente");
-      }
-    } catch (err) {
-      console.error("Error creando expediente:", err);
-    }
+    // Usa la función del contexto para agregar el expediente
+    addExpediente(formData);
+    
+    alert("✅ Expediente creado exitosamente");
+    navigate("/expedientes"); // Redirige a la lista
   };
 
+  // ... (El resto del código JSX del formulario es el mismo)
   return (
     <div className="form-container">
       <h2 className="form-title text-center">Crear Expediente</h2>
@@ -124,27 +47,19 @@ const CrearExpediente = () => {
             required
           />
         </div>
-
         {/* Sección de Demandante */}
         <div className="form-section">
           <h3 className="section-title">Datos del Demandante</h3>
-          <div className="form-input-group form-input-inline">
+          <div className="form-input-group">
             <input
               type="text"
               placeholder="DNI/CE"
-              className="form-input form-input-half"
+              className="form-input"
               value={formData.demandante_doc}
               onChange={(e) => setFormData({ ...formData, demandante_doc: e.target.value })}
             />
-            <Button
-              variant="primary"
-              onClick={() => consultarReniec("demandante")}
-              loading={loading}
-              className="form-button"
-            >
-              {loading ? "..." : "Buscar"}
-            </Button>
           </div>
+          
           <div className="form-input-group">
             <input
               type="text"
@@ -165,26 +80,17 @@ const CrearExpediente = () => {
             />
           </div>
         </div>
-
         {/* Sección de Demandado y Dirección */}
         <div className="form-section">
           <h3 className="section-title">Datos del Demandado</h3>
-          <div className="form-input-group form-input-inline">
+          <div className="form-input-group">
             <input
               type="text"
               placeholder="DNI/CE"
-              className="form-input form-input-half"
+              className="form-input"
               value={formData.demandado_doc}
               onChange={(e) => setFormData({ ...formData, demandado_doc: e.target.value })}
             />
-            <Button
-              variant="primary"
-              onClick={() => consultarReniec("demandado")}
-              disabled={loading}
-              className="form-button"
-            >
-              {loading ? "..." : "Buscar"}
-            </Button>
           </div>
           <div className="form-input-group">
             <input
@@ -205,7 +111,6 @@ const CrearExpediente = () => {
             />
           </div>
         </div>
-
         {/* Sección de Estado y Fechas */}
         <div className="form-input-duo">
           <div className="form-input-group">
@@ -221,16 +126,8 @@ const CrearExpediente = () => {
               <option value="Cerrado">Cerrado</option>
             </select>
           </div>
-          <div className="form-input-group">
-            <input
-              type="file"
-              className="form-input"
-              onChange={(e) => setFormData({ ...formData, archivo: e.target.files[0] })}
-            />
-          </div>
         </div>
-
-        {/* Sección de Fechas de Fin y Archivo */}
+        {/* Sección de Fechas */}
         <div className="form-input-duo">
           <div className="form-input-group">
             <label htmlFor="fecha-inicio" className="form-label">Fecha de inicio:</label>
@@ -252,9 +149,7 @@ const CrearExpediente = () => {
               onChange={(e) => setFormData({ ...formData, fecha_fin: e.target.value })}
             />
           </div>
-
         </div>
-
         <Button type="submit" className="form-submit-button">
           Crear Expediente
         </Button>
