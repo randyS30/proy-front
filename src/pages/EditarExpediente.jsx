@@ -15,7 +15,7 @@ export default function EditarExpediente() {
     estado: "En proceso",
     fecha_inicio: "",
     fecha_fin: "",
-    creado_por: "admin",
+    creado_por: "Admin",
   });
 
   // Cargar expediente actual
