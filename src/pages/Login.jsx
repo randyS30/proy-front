@@ -76,6 +76,7 @@ export default function Login() {
                 required
               />
             </div>
+            <p>¿Olvidaste tu contraseña?</p>
             <button
               type="submit"
               className="login-form-button"

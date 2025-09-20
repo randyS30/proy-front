@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import './CSS/CrearExpediente.css';
 const API_BASE = "https://proy-back-production.up.railway.app/api/expedientes";
 // cambia esto a la URL de RENIEC en Railway
 const RENIEC_API = "https://proy-back-production.up.railway.app/api/reniec";
@@ -136,101 +136,101 @@ export default function CrearExpediente() {
   };
 
   return (
-    <div className="max-w-xl mx-auto bg-white p-6 rounded-xl shadow">
-      <h2 className="text-2xl font-bold mb-4">Crear Expediente</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block font-semibold">Documento Demandante</label>
-          <div className="flex gap-2">
+    <div className="form-container">
+      <h2 className="form-title text-center">Crear Expediente</h2>
+      <form onSubmit={handleSubmit} className="form-main">
+        <div className="form-section">
+          <h3 className="section-title">Datos del Demandante</h3>
+          <div className="form-input-group form-input-inline">
             <input
               type="text"
               name="demandante_doc"
+              placeholder="DNI"
               value={formData.demandante_doc}
               onChange={handleChange}
-              className="border p-2 flex-1 rounded"
+              className="form-input form-input-half"
             />
             <button
               type="button"
               onClick={() => consultarReniec("demandante")}
-              className="bg-blue-500 text-white px-3 rounded"
+              className="form-button"
             >
               Buscar
             </button>
           </div>
-        </div>
-
-        <div>
-          <label className="block font-semibold">Demandante</label>
+           <div className="form-input-group">
           <input
             type="text"
+            placeholder="Nombre completo"
             name="demandante"
             value={formData.demandante}
             onChange={handleChange}
-            className="border p-2 w-full rounded"
+            className="form-input"
           />
         </div>
-
-        <div>
-          <label className="block font-semibold">Fecha Nacimiento</label>
+        <div className="form-input-group">
+          <input
+            type="text"
+            placeholder="Dirección"
+            name="direccion"
+            value={formData.direccion}
+            onChange={handleChange}
+            className="form-input"
+          />
+        </div>
+        <div className="form-input-group">
+            <label htmlFor="fecha-nacimiento" className="form-label">Fecha de nacimiento:</label>
           <input
             type="date"
             name="fecha_nacimiento"
             value={formData.fecha_nacimiento}
             onChange={handleChange}
-            className="border p-2 w-full rounded"
+            className="form-input"
           />
         </div>
-
-        <div>
-          <label className="block font-semibold">Dirección</label>
-          <input
-            type="text"
-            name="direccion"
-            value={formData.direccion}
-            onChange={handleChange}
-            className="border p-2 w-full rounded"
-          />
         </div>
 
-        <div>
-          <label className="block font-semibold">Documento Demandado</label>
-          <div className="flex gap-2">
+        <div className="form-section">
+          <h3 className="section-title">Datos del Demandado</h3>
+          <div className="form-input-group form-input-inline">
             <input
               type="text"
               name="demandado_doc"
+              placeholder="DNI"
               value={formData.demandado_doc}
               onChange={handleChange}
-              className="border p-2 flex-1 rounded"
+              className="form-input form-input-half"
             />
             <button
               type="button"
               onClick={() => consultarReniec("demandado")}
-              className="bg-blue-500 text-white px-3 rounded"
+              className="form-button"
             >
               Buscar
             </button>
           </div>
-        </div>
-
-        <div>
-          <label className="block font-semibold">Demandado</label>
+           <div className="form-input-group">
+          
           <input
             type="text"
             name="demandado"
+            placeholder="Nombre completo"
             value={formData.demandado}
             onChange={handleChange}
-            className="border p-2 w-full rounded"
+            className="form-input"
           />
+        </div>
         </div>
 
         {/* Estado */}
-        <div>
-          <label className="block font-semibold">Estado</label>
+        <div className="form-input-duo">
+          <div className="form-input-group">
+            <label htmlFor="fecha-inicio" className="form-label">Estado:</label>
           <select
             name="estado"
             value={formData.estado}
             onChange={handleChange}
-            className="w-full border rounded p-2"
+             className="form-input"
           >
             <option value="">Seleccione...</option>
             <option value="Abierto">Abierto</option>
@@ -239,22 +239,21 @@ export default function CrearExpediente() {
             <option value="Finalizado">Finalizado</option>
           </select>
         </div>
-
-        <div>
-          <label className="block font-semibold">Fecha Inicio</label>
+        <div className="form-input-group">
+            <label htmlFor="fecha-inicio" className="form-label">Fecha de inicio:</label>
           <input
             type="date"
             name="fecha_inicio"
             value={formData.fecha_inicio}
             onChange={handleChange}
-            className="border p-2 w-full rounded"
+            className="form-input"
           />
         </div>
-
+        </div>
         <button
           type="submit"
           disabled={loading}
-          className="bg-green-600 text-white px-4 py-2 rounded w-full"
+          className="form-submit-button"
         >
           {loading ? "Creando..." : "Crear Expediente"}
         </button>

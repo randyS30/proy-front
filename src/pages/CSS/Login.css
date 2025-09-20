@@ -2,7 +2,7 @@
 
 /* Contenedor principal que divide la página en dos */
 .login-form-container {
-  min-height: 80vh;
+  min-height: 100vh;
   display: flex;
   background-color: #ffffff; /* Fondo blanco */
 }
@@ -50,7 +50,14 @@
   justify-content: center;
   align-items: center;
 }
-
+.login-form-right p {
+ 
+  color: #c82333; /* Un gris sutil */
+  font-weight: 400;
+  max-width: 100%; /* Para que el texto no ocupe todo el ancho */
+  line-height: 1.5;
+  text-align: center; /* Espaciado entre líneas para mejor lectura */
+}
 /* Tarjeta o recuadro del formulario de inicio de sesión */
 .login-form-card {
   background-color: #f8f9fa;
@@ -58,7 +65,7 @@
   border-radius: 1rem;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 20rem; /* Más pequeño para que quepa bien en la columna */
+  max-width: 30rem; /* Más pequeño para que quepa bien en la columna */
   border: 1px solid #e0e0e0;
 }
 

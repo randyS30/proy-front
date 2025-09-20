@@ -1,5 +1,5 @@
-// src/pages/Usuarios.jsx
 import { useEffect, useState } from "react";
+import './CSS/Usuarios.css';
 
 const API_BASE = "https://proy-back-production.up.railway.app/api/usuarios";
 const ROLES = ["Admin", "Abogado", "Asistente"];
@@ -215,106 +215,140 @@ export default function Usuarios() {
   };
 
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold">Gestión de Usuarios</h1>
-      <p className="text-gray-600 mt-2">Lista, edita y crea usuarios en el sistema.</p>
+    <div className="usuarios-container">
+      <div className="usuarios-header">
+        <h1 className="usuarios-title">Gestión de Usuarios</h1>
+        <p className="usuarios-subtitle">Lista, edita y crea usuarios en el sistema.</p>
+      </div>
 
-      {error && <div className="text-red-600 my-3">{error}</div>}
+      <div className="usuarios-content">
+        {error && <div className="error-message">{error}</div>}
 
-      <form onSubmit={editingUserId ? guardarEdicion : crearUsuario} className="space-y-4 mt-4 max-w-lg">
-        <div>
-          <label className="block">Nombre</label>
-          <input className="border p-2 w-full" value={nombre} onChange={(e) => setNombre(e.target.value)} />
-        </div>
-
-        <div>
-          <label className="block">Email</label>
-          <input type="email" className="border p-2 w-full" value={email} onChange={(e) => setEmail(e.target.value)} />
-        </div>
-
-        <div>
-          <label className="block">Rol</label>
-          <select className="border p-2 w-full" value={rol} onChange={(e) => setRol(e.target.value)}>
-            <option value="">-- Seleccione rol --</option>
-            {ROLES.map((r) => (
-              <option key={r} value={r}>
-                {r}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {!editingUserId && (
-          <>
-            <div>
-              <label className="block">Contraseña</label>
-              <input type="password" className="border p-2 w-full" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <div className="form-section">
+          <form onSubmit={editingUserId ? guardarEdicion : crearUsuario} className="user-form">
+            <h2 className="form-title">{editingUserId ? "Editar Usuario" : "Crear Usuario"}</h2>
+            <div className="form-group">
+              <label className="form-label">Nombre Completo</label>
+              <input 
+                className="form-input" 
+                value={nombre} 
+                onChange={(e) => setNombre(e.target.value)} 
+                required 
+              />
             </div>
-            <div>
-              <label className="block">Confirmar contraseña</label>
-              <input type="password" className="border p-2 w-full" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+
+            <div className="form-group">
+              <label className="form-label">Correo Electrónico</label>
+              <input 
+                type="email" 
+                className="form-input" 
+                value={email} 
+                onChange={(e) => setEmail(e.target.value)} 
+                required 
+              />
             </div>
-          </>
-        )}
 
-        <div className="flex items-center space-x-2">
-          <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
-            {editingUserId ? "Guardar cambios" : "Crear usuario"}
-          </button>
+            <div className="form-group">
+              <label className="form-label">Rol</label>
+              <select 
+                className="form-input" 
+                value={rol} 
+                onChange={(e) => setRol(e.target.value)}
+                required
+              >
+                <option value="">-- Seleccione rol --</option>
+                {ROLES.map((r) => (
+                  <option key={r} value={r}>{r}</option>
+                ))}
+              </select>
+            </div>
 
-          {editingUserId && (
-            <button type="button" onClick={limpiarFormulario} className="px-3 py-2 border rounded">
-              Cancelar
-            </button>
-          )}
+            {!editingUserId && (
+              <>
+                <div className="form-group">
+                  <label className="form-label">Contraseña</label>
+                  <input 
+                    type="password" 
+                    className="form-input" 
+                    value={password} 
+                    onChange={(e) => setPassword(e.target.value)} 
+                    required 
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Confirmar contraseña</label>
+                  <input 
+                    type="password" 
+                    className="form-input" 
+                    value={confirmPassword} 
+                    onChange={(e) => setConfirmPassword(e.target.value)} 
+                    required 
+                  />
+                </div>
+              </>
+            )}
 
-          <button type="button" onClick={fetchUsuarios} className="px-3 py-2 border rounded">
-            Refrescar
-          </button>
-        </div>
-      </form>
-
-      <div className="mt-6 overflow-auto">
-        {loading ? (
-          <p>Cargando usuarios...</p>
-        ) : (
-          <table className="w-full table-auto border">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="border px-4 py-2">ID</th>
-                <th className="border px-4 py-2">Nombre</th>
-                <th className="border px-4 py-2">Email</th>
-                <th className="border px-4 py-2">Rol</th>
-                <th className="border px-4 py-2">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {usuarios.map((u) => (
-                <tr key={u.id}>
-                  <td className="border px-4 py-2">{u.id}</td>
-                  <td className="border px-4 py-2">{capitalizeWords(u.nombre)}</td>
-                  <td className="border px-4 py-2">{u.email}</td>
-                  <td className="border px-4 py-2">{u.rol}</td>
-                  <td className="border px-4 py-2">
-                    <button className="mr-2 px-2 py-1 bg-yellow-400 rounded" onClick={() => comenzarEdicion(u)}>
-                      Editar
-                    </button>
-                    <button className="px-2 py-1 bg-red-500 text-white rounded" onClick={() => eliminar(u.id)}>
-                      Eliminar
-                    </button>
-                  </td>
-                </tr>
-              ))}
-              {usuarios.length === 0 && (
-                <tr>
-                  <td colSpan="5" className="text-center p-4">
-                    No hay usuarios
-                  </td>
-                </tr>
+            <div className="form-actions">
+              <button type="submit" className="btn-submit">
+                {editingUserId ? "Guardar cambios" : "Crear usuario"}
+              </button>
+              {editingUserId && (
+                <button type="button" onClick={limpiarFormulario} className="btn-cancel">
+                  Cancelar
+                </button>
               )}
-            </tbody>
-          </table>
-        )}
+              <button type="button" onClick={fetchUsuarios} className="btn-refresh">
+                Refrescar
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div className="table-section">
+          <h2 className="table-title">Usuarios Existentes</h2>
+          <div className="table-wrapper">
+            {loading ? (
+              <p className="loading-message">Cargando usuarios...</p>
+            ) : (
+              <table className="user-table">
+                <thead>
+                  <tr>
+                    <th className="table-th">ID</th>
+                    <th className="table-th">Nombre</th>
+                    <th className="table-th">Email</th>
+                    <th className="table-th">Rol</th>
+                    <th className="table-th">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {usuarios.map((u) => (
+                    <tr key={u.id} className="table-row">
+                      <td className="table-td">{u.id}</td>
+                      <td className="table-td">{capitalizeWords(u.nombre)}</td>
+                      <td className="table-td">{u.email}</td>
+                      <td className="table-td">{u.rol}</td>
+                      <td className="table-td">
+                        <button className="btn-edit" onClick={() => comenzarEdicion(u)}>
+                          Editar
+                        </button>
+                        <button className="btn-delete" onClick={() => eliminar(u.id)}>
+                          Eliminar
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {usuarios.length === 0 && (
+                    <tr>
+                      <td colSpan="5" className="no-data-message">
+                        No hay usuarios
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

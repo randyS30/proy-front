@@ -11,14 +11,14 @@ import CrearExpediente from "./pages/CrearExpediente.jsx";
 import '../src/Index.css';
 import MainLayout from "./layouts/MainLayout";
 import ExpedienteDetalle from "./pages/ExpedienteDetalle.jsx";
+import ExpedientesList from "./pages/ExpedientesLista.jsx";
 import { ExpedienteProvider } from "./layouts/ExpedienteContext.jsx"; // Importa el proveedor
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
-      {/* Envuelve las rutas con el ExpedienteProvider */}
-      <ExpedienteProvider>
-        <Routes>
+     <ExpedienteProvider>
+      <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/" element={<MainLayout />}>
             <Route path="dashboard" element={<Dashboard />} />
@@ -30,7 +30,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             <Route path="configuracion" element={<Configuracion />} />
           </Route>
         </Routes>
-      </ExpedienteProvider>
+  </ExpedienteProvider>
     </BrowserRouter>
   </React.StrictMode>
 );
