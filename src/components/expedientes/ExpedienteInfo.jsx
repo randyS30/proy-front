@@ -29,9 +29,7 @@ export default function ExpedienteInfo({ expediente }) {
               Ver archivo
             </a>
           )}
-          <button className="btn btn-success" onClick={analizarExpediente}>
-            🔎 Analizar con IA
-          </button>
+          
           <Link className="btn" to="/expedientes">Volver</Link>
         </div>
       </div>

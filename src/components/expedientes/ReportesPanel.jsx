@@ -11,6 +11,7 @@ export default function ReportesPanel({ expedienteId }) {
   const [editReporte, setEditReporte] = useState(null);
   const [reporteForm, setReporteForm] = useState({ contenido: "" });
 
+  // Cargar reportes
   useEffect(() => {
     const load = async () => {
       try {
@@ -43,30 +44,35 @@ export default function ReportesPanel({ expedienteId }) {
   const guardarReporte = async (e) => {
     e.preventDefault();
     try {
+      const token = localStorage.getItem("token");
+      let res, data;
+
       if (editReporte) {
-        const res = await fetch(`${API}/api/reportes/${editReporte.id}`, {
+        // Editar
+        res = await fetch(`${API}/api/reportes/${editReporte.id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(reporteForm),
         });
-        const data = await res.json();
+        data = await res.json();
         if (data.success) {
           setReportes((prev) => prev.map((x) => (x.id === editReporte.id ? data.reporte : x)));
           setOpenModal(false);
         }
       } else {
-        const res = await fetch(`${API}/api/expedientes/${expedienteId}/reportes`, {
+        // Crear
+        res = await fetch(`${API}/api/expedientes/${expedienteId}/reportes`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(reporteForm),
         });
-        const data = await res.json();
+        data = await res.json();
         if (data.success) {
           setReportes((prev) => [data.reporte, ...prev]);
           setOpenModal(false);
@@ -89,6 +95,7 @@ export default function ReportesPanel({ expedienteId }) {
       if (data.success) setReportes((prev) => prev.filter((x) => x.id !== id));
     } catch (err) {
       console.error(err);
+      alert("Error eliminando reporte");
     }
   };
 
@@ -98,7 +105,9 @@ export default function ReportesPanel({ expedienteId }) {
     <div className="card">
       <div className="card-header">
         <h3>Reportes</h3>
-        <button className="btn" onClick={abrirNuevo}>+ Nuevo reporte</button>
+        <button className="btn" onClick={abrirNuevo}>
+          + Nuevo reporte
+        </button>
       </div>
       <div className="table-wrap">
         <table className="table">
@@ -113,17 +122,25 @@ export default function ReportesPanel({ expedienteId }) {
           </thead>
           <tbody>
             {reportes.length === 0 && (
-              <tr><td colSpan="5" className="muted">Sin reportes</td></tr>
+              <tr>
+                <td colSpan="5" className="muted">
+                  Sin reportes
+                </td>
+              </tr>
             )}
             {reportes.map((rp) => (
               <tr key={rp.id}>
                 <td>{rp.id}</td>
                 <td>{rp.contenido}</td>
-                <td>{rp.generado_por || "-"}</td>
+                <td>{rp.generado_por_nombre || "-"}</td>
                 <td>{rp.generado_en ? new Date(rp.generado_en).toLocaleString() : "-"}</td>
                 <td>
-                  <button className="btn btn-secondary" onClick={() => abrirEditar(rp)}>Editar</button>
-                  <button className="btn btn-danger" onClick={() => eliminarReporte(rp.id)}>Eliminar</button>
+                  <button className="btn btn-secondary" onClick={() => abrirEditar(rp)}>
+                    Editar
+                  </button>
+                  <button className="btn btn-danger" onClick={() => eliminarReporte(rp.id)}>
+                    Eliminar
+                  </button>
                 </td>
               </tr>
             ))}
@@ -132,7 +149,12 @@ export default function ReportesPanel({ expedienteId }) {
       </div>
 
       {/* Modal */}
-      <Modal open={openModal} onClose={() => setOpenModal(false)} title={editReporte ? "Editar reporte" : "Nuevo reporte"} width={520}>
+      <Modal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        title={editReporte ? "Editar reporte" : "Nuevo reporte"}
+        width={520}
+      >
         <form onSubmit={guardarReporte} className="form-grid">
           <label className="full">
             <span>Contenido *</span>
@@ -143,8 +165,12 @@ export default function ReportesPanel({ expedienteId }) {
             />
           </label>
           <div className="actions">
-            <button type="submit" className="btn btn-primary">Guardar</button>
-            <button type="button" className="btn" onClick={() => setOpenModal(false)}>Cancelar</button>
+            <button type="submit" className="btn btn-primary">
+              Guardar
+            </button>
+            <button type="button" className="btn" onClick={() => setOpenModal(false)}>
+              Cancelar
+            </button>
           </div>
         </form>
       </Modal>

@@ -1,15 +1,11 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Button from "../components/Button";
-import { useExpedientes } from '../layouts/ExpedienteContext'; // Importa el hook del contexto
-import './CSS/CrearExpediente.css';
+import { useState } from "react";
 
-const CrearExpediente = () => {
-  const navigate = useNavigate();
-  const { addExpediente } = useExpedientes(); // Usa la función del contexto
+const API_BASE = "https://proy-back-production.up.railway.app/api/expedientes";
+// cambia esto a la URL de RENIEC en Railway
+const RENIEC_API = "https://proy-back-production.up.railway.app/api/reniec";
 
+export default function CrearExpediente() {
   const [formData, setFormData] = useState({
-    numero_expediente: "",
     demandante_doc: "",
     demandante: "",
     fecha_nacimiento: "",
@@ -18,144 +14,251 @@ const CrearExpediente = () => {
     demandado: "",
     estado: "",
     fecha_inicio: "",
-    fecha_fin: "",
   });
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("userId"); // el id del usuario logueado
 
-    // Usa la función del contexto para agregar el expediente
-    addExpediente(formData);
-    
-    alert("✅ Expediente creado exitosamente");
-    navigate("/expedientes"); // Redirige a la lista
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // ... (El resto del código JSX del formulario es el mismo)
+  // Consulta RENIEC (demandante o demandado)
+  const consultarReniec = async (tipo) => {
+    const doc =
+      tipo === "demandante"
+        ? formData.demandante_doc
+        : formData.demandado_doc;
+
+    if (!doc || (doc.length !== 8 && doc.length !== 9)) {
+      alert("Documento inválido (DNI: 8 dígitos, CE: 9 dígitos)");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch(`${RENIEC_API}/${doc}`);
+      const data = await res.json();
+
+      if (data.success) {
+        if (tipo === "demandante") {
+          setFormData((prev) => ({
+            ...prev,
+            demandante: data.nombre || "",
+            fecha_nacimiento: data.fecha_nacimiento || "",
+            direccion: data.direccion || "",
+          }));
+        } else {
+          setFormData((prev) => ({
+            ...prev,
+            demandado: data.nombre || "",
+          }));
+        }
+      } else {
+        alert("⚠️ No se encontró en RENIEC, completa los datos manualmente.");
+      }
+    } catch (err) {
+      console.error("Error RENIEC:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Genera EXP-AÑO-0000
+  const generarNumeroExpediente = () => {
+    const year = new Date().getFullYear();
+    const rand = Math.floor(Math.random() * 10000)
+      .toString()
+      .padStart(4, "0");
+    return `EXP-${year}-${rand}`;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!formData.demandante_doc || !formData.demandante) {
+    alert("Completa los datos del demandante");
+    return;
+  }
+  if (!formData.demandado_doc || !formData.demandado) {
+    alert("Completa los datos del demandado");
+    return;
+  }
+  if (!formData.estado || !formData.fecha_inicio) {
+    alert("Completa estado y fecha inicio");
+    return;
+  }
+
+    setLoading(true);
+
+    try {
+      const numero_expediente = generarNumeroExpediente();
+      const body = {
+        ...formData,
+        numero_expediente,
+        creado_por: userId, // aquí automáticamente
+      };
+
+      const res = await fetch(API_BASE, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (!res.ok) {
+        const txt = await res.text();
+        throw new Error(txt || "Error al crear expediente");
+      }
+
+      alert("Expediente creado correctamente ✅");
+      // limpiar form
+      setFormData({
+        demandante_doc: "",
+        demandante: "",
+        fecha_nacimiento: "",
+        direccion: "",
+        demandado_doc: "",
+        demandado: "",
+        estado: "",
+        fecha_inicio: "",
+      });
+    } catch (err) {
+      console.error("Error creando expediente:", err);
+      alert("Error: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="form-container">
-      <h2 className="form-title text-center">Crear Expediente</h2>
-      <form onSubmit={handleSubmit} className="form-main">
-        {/* Sección de Número de Expediente */}
-        <div className="form-input-group">
+    <div className="max-w-xl mx-auto bg-white p-6 rounded-xl shadow">
+      <h2 className="text-2xl font-bold mb-4">Crear Expediente</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block font-semibold">Documento Demandante</label>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              name="demandante_doc"
+              value={formData.demandante_doc}
+              onChange={handleChange}
+              className="border p-2 flex-1 rounded"
+            />
+            <button
+              type="button"
+              onClick={() => consultarReniec("demandante")}
+              className="bg-blue-500 text-white px-3 rounded"
+            >
+              Buscar
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label className="block font-semibold">Demandante</label>
           <input
             type="text"
-            placeholder="Número de expediente"
-            className="form-input"
-            value={formData.numero_expediente}
-            onChange={(e) => setFormData({ ...formData, numero_expediente: e.target.value })}
-            required
+            name="demandante"
+            value={formData.demandante}
+            onChange={handleChange}
+            className="border p-2 w-full rounded"
           />
         </div>
-        {/* Sección de Demandante */}
-        <div className="form-section">
-          <h3 className="section-title">Datos del Demandante</h3>
-          <div className="form-input-group">
-            <input
-              type="text"
-              placeholder="DNI/CE"
-              className="form-input"
-              value={formData.demandante_doc}
-              onChange={(e) => setFormData({ ...formData, demandante_doc: e.target.value })}
-            />
-          </div>
-          
-          <div className="form-input-group">
-            <input
-              type="text"
-              placeholder="Nombre completo"
-              className="form-input"
-              value={formData.demandante}
-              onChange={(e) => setFormData({ ...formData, demandante: e.target.value })}
-            />
-          </div>
-          <div className="form-input-group">
-            <label htmlFor="fecha-nacimiento" className="form-label">Fecha de nacimiento:</label>
-            <input
-              id="fecha-nacimiento"
-              type="date"
-              className="form-input"
-              value={formData.fecha_nacimiento}
-              onChange={(e) => setFormData({ ...formData, fecha_nacimiento: e.target.value })}
-            />
-          </div>
+
+        <div>
+          <label className="block font-semibold">Fecha Nacimiento</label>
+          <input
+            type="date"
+            name="fecha_nacimiento"
+            value={formData.fecha_nacimiento}
+            onChange={handleChange}
+            className="border p-2 w-full rounded"
+          />
         </div>
-        {/* Sección de Demandado y Dirección */}
-        <div className="form-section">
-          <h3 className="section-title">Datos del Demandado</h3>
-          <div className="form-input-group">
+
+        <div>
+          <label className="block font-semibold">Dirección</label>
+          <input
+            type="text"
+            name="direccion"
+            value={formData.direccion}
+            onChange={handleChange}
+            className="border p-2 w-full rounded"
+          />
+        </div>
+
+        <div>
+          <label className="block font-semibold">Documento Demandado</label>
+          <div className="flex gap-2">
             <input
               type="text"
-              placeholder="DNI/CE"
-              className="form-input"
+              name="demandado_doc"
               value={formData.demandado_doc}
-              onChange={(e) => setFormData({ ...formData, demandado_doc: e.target.value })}
+              onChange={handleChange}
+              className="border p-2 flex-1 rounded"
             />
-          </div>
-          <div className="form-input-group">
-            <input
-              type="text"
-              placeholder="Nombre completo"
-              className="form-input"
-              value={formData.demandado}
-              onChange={(e) => setFormData({ ...formData, demandado: e.target.value })}
-            />
-          </div>
-          <div className="form-input-group">
-            <input
-              type="text"
-              placeholder="Dirección"
-              className="form-input"
-              value={formData.direccion}
-              onChange={(e) => setFormData({ ...formData, direccion: e.target.value })}
-            />
-          </div>
-        </div>
-        {/* Sección de Estado y Fechas */}
-        <div className="form-input-duo">
-          <div className="form-input-group">
-            <select
-              className="form-input"
-              value={formData.estado}
-              onChange={(e) => setFormData({ ...formData, estado: e.target.value })}
-              required
+            <button
+              type="button"
+              onClick={() => consultarReniec("demandado")}
+              className="bg-blue-500 text-white px-3 rounded"
             >
-              <option value="">-- Estado --</option>
-              <option value="Abierto">Abierto</option>
-              <option value="En Proceso">En Proceso</option>
-              <option value="Cerrado">Cerrado</option>
-            </select>
+              Buscar
+            </button>
           </div>
         </div>
-        {/* Sección de Fechas */}
-        <div className="form-input-duo">
-          <div className="form-input-group">
-            <label htmlFor="fecha-inicio" className="form-label">Fecha de inicio:</label>
-            <input
-              id="fecha-inicio"
-              type="date"
-              className="form-input"
-              value={formData.fecha_inicio}
-              onChange={(e) => setFormData({ ...formData, fecha_inicio: e.target.value })}
-            />
-          </div>
-          <div className="form-input-group">
-            <label htmlFor="fecha-fin" className="form-label">Fecha de fin:</label>
-            <input
-              id="fecha-fin"
-              type="date"
-              className="form-input"
-              value={formData.fecha_fin}
-              onChange={(e) => setFormData({ ...formData, fecha_fin: e.target.value })}
-            />
-          </div>
+
+        <div>
+          <label className="block font-semibold">Demandado</label>
+          <input
+            type="text"
+            name="demandado"
+            value={formData.demandado}
+            onChange={handleChange}
+            className="border p-2 w-full rounded"
+          />
         </div>
-        <Button type="submit" className="form-submit-button">
-          Crear Expediente
-        </Button>
+
+        {/* Estado */}
+        <div>
+          <label className="block font-semibold">Estado</label>
+          <select
+            name="estado"
+            value={formData.estado}
+            onChange={handleChange}
+            className="w-full border rounded p-2"
+          >
+            <option value="">Seleccione...</option>
+            <option value="Abierto">Abierto</option>
+            <option value="Pendiente">Pendiente</option>
+            <option value="En Proceso">En Proceso</option>
+            <option value="Finalizado">Finalizado</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block font-semibold">Fecha Inicio</label>
+          <input
+            type="date"
+            name="fecha_inicio"
+            value={formData.fecha_inicio}
+            onChange={handleChange}
+            className="border p-2 w-full rounded"
+          />
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="bg-green-600 text-white px-4 py-2 rounded w-full"
+        >
+          {loading ? "Creando..." : "Crear Expediente"}
+        </button>
       </form>
     </div>
   );
-};
-
-export default CrearExpediente;
+}
