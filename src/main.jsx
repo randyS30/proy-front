@@ -13,6 +13,7 @@ import MainLayout from "./layouts/MainLayout";
 import ExpedienteDetalle from "./pages/ExpedienteDetalle.jsx";
 import ExpedientesList from "./pages/ExpedientesLista.jsx";
 import { ExpedienteProvider } from "./layouts/ExpedienteContext.jsx"; // Importa el proveedor
+import Perfil from "./pages/Perfil.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -26,6 +27,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             <Route path="expedientes/nuevo" element={<CrearExpediente />} />
             <Route path="expedientes/:id" element={<ExpedienteDetalle />} />
             <Route path="usuarios" element={<Usuarios />} />
+            <Route path="perfil" element={<Perfil />} />
             <Route path="reportes" element={<Reportes />} />
             <Route path="configuracion" element={<Configuracion />} />
           </Route>

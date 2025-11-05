@@ -1,0 +1,71 @@
+.perfil-container {
+  max-width: 760px;
+  margin: 28px auto;
+  padding: 18px;
+}
+
+.perfil-header { text-align: center; margin-bottom: 12px; }
+.perfil-title { font-size: 1.9rem; margin: 0; color: #680D0D; }
+
+.perfil-content { display: flex; justify-content: center; }
+
+.perfil-card {
+  width: 100%;
+  max-width: 560px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  
+  text-align: center;
+  display: block;
+}
+
+.perfil-avatar-wrap { display:flex; justify-content:center; margin-bottom: 16px; }
+.perfil-avatar {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 5px solid rgb(141, 0, 0);
+  box-shadow: 0 10px 30px rgba(253, 13, 13, 0.08);
+  background:#f5f7fb;
+}
+
+/* filas en columna y centradas */
+.perfil-dl { margin: 0; }
+.perfil-row {
+  display:flex;
+  flex-direction: column;
+  align-items:center;
+  padding: 10px 0;
+  border-bottom: 1px solid #f1f3f5;
+}
+
+/* Etiqueta (tipo) y valor: centrados y en negrita/mas grandes */
+.perfil-label {
+  font-weight: 800;
+  font-size: 1.22rem;
+  color: #680D0D;
+  margin-bottom: 6px;
+}
+.perfil-value {
+  font-weight: 700;
+  font-size: 1.02rem;
+  color: #495057;
+}
+.perfil-actions { margin-top: 18px; display:flex; justify-content:center; gap:10px; }
+.perfil-btn-primary {
+  background-color: #AD0000; 
+  color:#fff; 
+  padding:10px 16px; 
+  border-radius:8px; 
+  text-decoration:none; 
+  font-weight:700; 
+  border:none;
+}
+
+/* último elemento sin borde */
+.perfil-row:last-child { border-bottom: none; }
+
+
+
