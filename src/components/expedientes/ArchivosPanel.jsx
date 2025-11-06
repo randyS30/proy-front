@@ -1,7 +1,26 @@
 import React, { useEffect, useState } from "react";
-import Modal from "../Modal";
+// Se corrigió la ruta de importación asumiendo que Modal está en 'src/layouts'
+import Modal from "../Modal.jsx"; 
 
 const API = "https://proy-back-production.up.railway.app";
+
+// Nueva función para recargar archivos, para no repetir código
+const loadArchivos = async (expedienteId, setArchivos, setLoading) => {
+  setLoading(true);
+  try {
+    const res = await fetch(`${API}/api/expedientes/${expedienteId}/archivos`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    });
+    const data = await res.json();
+    setArchivos(data.success ? data.archivos : []);
+  } catch (err) {
+    console.error(err);
+    setArchivos([]);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
 export default function ArchivosPanel({ expedienteId }) {
   const [archivos, setArchivos] = useState([]);
@@ -11,20 +30,7 @@ export default function ArchivosPanel({ expedienteId }) {
   const [filesToUpload, setFilesToUpload] = useState(null);
 
   useEffect(() => {
-    const load = async () => {
-      try {
-        const res = await fetch(`${API}/api/expedientes/${expedienteId}/archivos`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
-        const data = await res.json();
-        setArchivos(data.success ? data.archivos : []);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
+    loadArchivos(expedienteId, setArchivos, setLoading);
   }, [expedienteId]);
 
   const subirArchivos = async (e) => {
@@ -33,11 +39,18 @@ export default function ArchivosPanel({ expedienteId }) {
       alert("Selecciona al menos un archivo");
       return;
     }
+    
     const formData = new FormData();
     for (let f of filesToUpload) {
+      if (f.type !== "application/pdf") {
+        alert(`El archivo "${f.name}" no es un PDF. Solo se permiten archivos PDF.`);
+        return; 
+      }
       formData.append("archivos", f);
     }
-    formData.append("subido_por", "usuario_demo");
+    
+    formData.append("subido_por", "1"); 
+    formData.append("expediente_id", expedienteId); 
 
     try {
       const res = await fetch(`${API}/api/expedientes/${expedienteId}/archivos`, {
@@ -47,16 +60,21 @@ export default function ArchivosPanel({ expedienteId }) {
       });
       const data = await res.json();
       if (data.success) {
-        setArchivos((prev) => [...prev, ...data.archivos]);
+        // En lugar de solo añadir, recargamos la lista completa
+        // para que sea más robusto
+        loadArchivos(expedienteId, setArchivos, setLoading);
         setOpenModal(false);
         setFilesToUpload(null);
+        alert("✅ Archivos subidos exitosamente.");
+      } else {
+         alert(`❌ Error del servidor: ${data.message || 'Error desconocido'}`);
       }
     } catch (err) {
       console.error(err);
-      alert("Error subiendo archivos");
+      alert("Error de conexión al subir archivos");
     }
   };
-
+      
   const eliminarArchivo = async (id) => {
     if (!window.confirm("¿Eliminar archivo?")) return;
     try {
@@ -65,29 +83,55 @@ export default function ArchivosPanel({ expedienteId }) {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       const data = await res.json();
-      if (data.success) setArchivos((prev) => prev.filter((x) => x.id !== id));
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const analizarArchivo = async (id) => {
-    try {
-      const res = await fetch(`${API}/api/expedientes/archivos/${id}/analizar`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-      const data = await res.json();
       if (data.success) {
-        alert("✅ Análisis generado con IA");
+        setArchivos((prev) => prev.filter((x) => x.id !== id));
       } else {
-        alert("❌ No se pudo analizar");
+        alert(`Error al eliminar: ${data.message}`);
       }
     } catch (err) {
       console.error(err);
-      alert("Error analizando archivo con IA");
+      alert("Error de conexión al eliminar");
     }
   };
+
+
+  // Esta es la nueva función de descarga que SÍ envía el token
+  const descargarArchivoClick = async (archivo) => {
+    try {
+      const res = await fetch(`${API}/api/archivos/${archivo.id}/download`, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+
+      if (!res.ok) {
+        // Si el servidor envía un error (ej. 404), léelo como JSON
+        const errData = await res.json();
+        throw new Error(errData.message || "No se pudo descargar el archivo");
+      }
+
+      // 1. Convertir la respuesta en un Blob (el archivo en sí)
+      const blob = await res.blob();
+
+      // 2. Crear un link temporal en memoria
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      
+      // 3. Poner el nombre original del archivo
+      link.setAttribute("download", archivo.nombre_original);
+      
+      // 4. Simular clic y limpiar
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+    } catch (err) {
+      console.error(err);
+      alert(`Error al descargar: ${err.message}`);
+    }
+  };
+
 
   if (loading) return <p>Cargando archivos…</p>;
 
@@ -105,7 +149,8 @@ export default function ArchivosPanel({ expedienteId }) {
               <th>Nombre</th>
               <th>Subido por</th>
               <th>Fecha</th>
-              <th style={{ width: 220 }}>Acciones</th>
+              {/* Ancho de columna ajustado */}
+              <th style={{ width: 160 }}>Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -116,17 +161,19 @@ export default function ArchivosPanel({ expedienteId }) {
               <tr key={ar.id}>
                 <td>{ar.id}</td>
                 <td>{ar.nombre_original}</td>
-                <td>{ar.subido_por}</td>
+                <td>{ar.subido_por}</td> 
                 <td>{ar.subido_en ? new Date(ar.subido_en).toLocaleString() : "-"}</td>
                 <td>
-                  <a className="btn btn-light"
-                     href={`${API}/api/archivos/${ar.id}/download`}
-                     target="_blank" rel="noreferrer">
+                  {/* --- CAMBIO AQUÍ --- */}
+                  <button 
+                    className="btn btn-light" 
+                    onClick={() => descargarArchivoClick(ar)}
+                  >
                     Descargar
-                  </a>
-                  <button className="btn btn-warning" onClick={() => analizarArchivo(ar.id)}>
-                    🔎 Analizar con IA
                   </button>
+                  
+                  {/* --- BOTÓN 'Analizar con IA' ELIMINADO --- */}
+
                   <button className="btn btn-danger" onClick={() => eliminarArchivo(ar.id)}>Eliminar</button>
                 </td>
               </tr>
@@ -139,7 +186,7 @@ export default function ArchivosPanel({ expedienteId }) {
       <Modal open={openModal} onClose={() => setOpenModal(false)} title="Subir archivos" width={480}>
         <form onSubmit={subirArchivos} className="form-grid">
           <label className="full">
-            <input type="file" multiple onChange={(e) => setFilesToUpload(e.target.files)} />
+            <input type="file" multiple onChange={(e) => setFilesToUpload(e.target.files)} accept="application/pdf"/>
           </label>
           <div className="actions">
             <button type="submit" className="btn btn-primary">Subir</button>
