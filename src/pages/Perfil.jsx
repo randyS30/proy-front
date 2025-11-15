@@ -1,4 +1,4 @@
-// ...existing code...
+
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./CSS/Perfil.css";
@@ -38,7 +38,7 @@ const capitalizeWords = (str) =>
         .join(" ")
     : "";
 
-// ...existing code...
+
 export default function Perfil() {
   const storedUser = (() => {
     try {
@@ -75,7 +75,6 @@ export default function Perfil() {
         return;
       }
 
-      // Si /me no responde, usamos user guardado (evitamos GET /:id)
       if (storedUser) {
         setProfile(storedUser);
         return;
@@ -92,13 +91,12 @@ export default function Perfil() {
 
   useEffect(() => {
     fetchProfile();
-    // eslint-disable-next-line
   }, []);
 
-  // Avatar: si el perfil trae avatar/imagen usa eso, si no genera placeholder con iniciales
+
   const avatarUrl = (() => {
     const name = profile?.nombre || profile?.name || "Usuario";
-    // ui-avatars genera una imagen falsa; cambia parámetros si quieres otro estilo
+  
     return `${profile?.avatar || profile?.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(
       name
     )}&background=AD0000&color=fff&rounded=true&size=180`}`;

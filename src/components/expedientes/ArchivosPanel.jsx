@@ -79,9 +79,9 @@ export default function ArchivosPanel({ expedienteId }) {
       });
       const data = await res.json();
       if (data.success) {
-        alert("✅ Análisis generado con IA");
+        alert(" Análisis generado con IA");
       } else {
-        alert("❌ No se pudo analizar");
+        alert(" No se pudo analizar");
       }
     } catch (err) {
       console.error(err);
@@ -135,7 +135,6 @@ export default function ArchivosPanel({ expedienteId }) {
         </table>
       </div>
 
-      {/* Modal */}
       <Modal open={openModal} onClose={() => setOpenModal(false)} title="Subir archivos" width={480}>
         <form onSubmit={subirArchivos} className="form-grid">
           <label className="full">
