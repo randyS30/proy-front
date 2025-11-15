@@ -56,7 +56,7 @@ export default function EditarExpediente() {
 
   return (
     <div className="form-container">
-      <h2>✏️ Editar Expediente</h2>
+      <h2>Editar Expediente</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>N° Expediente</label>

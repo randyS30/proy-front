@@ -4,8 +4,7 @@ import './CSS/Usuarios.css';
 const API_BASE = "https://proy-back-production.up.railway.app/api/usuarios";
 const ROLES = ["Admin", "Abogado", "Asistente"];
 
-// regex: mínimo 8 chars, al menos 1 mayúscula, 1 minúscula y 1 número.
-// permite símbolos también.
+
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 
 export default function Usuarios() {
@@ -13,7 +12,7 @@ export default function Usuarios() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // formulario
+
   const [nombre, setNombre] = useState("");
   const [email, setEmail] = useState("");
   const [rol, setRol] = useState("");
@@ -55,7 +54,7 @@ export default function Usuarios() {
 
   useEffect(() => {
     fetchUsuarios();
-    // eslint-disable-next-line
+ 
   }, []);
 
   const limpiarFormulario = () => {
@@ -68,7 +67,6 @@ export default function Usuarios() {
     setError(null);
   };
 
-  // devuelve el rol "canónico" según ROLES (case-insensitive)
   const canonicalRole = (r) => {
     if (!r) return null;
     const found = ROLES.find((x) => x.toLowerCase() === r.trim().toLowerCase());
@@ -77,7 +75,7 @@ export default function Usuarios() {
 
   const validateEmail = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
 
-  // VALIDACIONES: isEdit = true cuando es PUT (no se exige password)
+
   const validar = (isEdit = false) => {
     const n = (nombre || "").trim();
     const em = (email || "").trim();
@@ -95,7 +93,6 @@ export default function Usuarios() {
     return null;
   };
 
-  // capitalizar cada palabra (para nombre)
   const capitalizeWords = (str) =>
     str
       ? str
@@ -105,7 +102,6 @@ export default function Usuarios() {
           .join(" ")
       : "";
 
-  // CREATE
   const crearUsuario = async (e) => {
     e.preventDefault();
     setError(null);
@@ -115,7 +111,7 @@ export default function Usuarios() {
     const body = {
       nombre: nombre.trim(),
       email: email.trim(),
-      rol: canonicalRole(rol), // envía la forma exacta: Admin/Abogado/Asistente
+      rol: canonicalRole(rol),
       password,
     };
 
@@ -127,7 +123,7 @@ export default function Usuarios() {
       });
       const data = await handleResponse(res);
       if (data.usuario) {
-        // añade nuevo usuario al inicio
+      
         setUsuarios((s) => [data.usuario, ...s]);
       } else {
         await fetchUsuarios();
@@ -135,7 +131,7 @@ export default function Usuarios() {
       limpiarFormulario();
     } catch (err) {
       console.error("crearUsuario error:", err);
-      // si el error viene del CHECK constraint, lo hacemos más claro
+      
       if (err.message && err.message.toLowerCase().includes("violates check constraint")) {
         setError(
           "El rol enviado no está permitido por la base de datos. Asegúrate de seleccionar uno de: " +
@@ -147,7 +143,7 @@ export default function Usuarios() {
     }
   };
 
-  // BEGIN EDIT
+
   const comenzarEdicion = (u) => {
     setEditingUserId(u.id);
     setNombre(u.nombre || "");
@@ -158,7 +154,7 @@ export default function Usuarios() {
     setError(null);
   };
 
-  // SAVE EDIT (PUT) - no enviamos password por defecto
+  
   const guardarEdicion = async (e) => {
     e.preventDefault();
     setError(null);
@@ -197,7 +193,7 @@ export default function Usuarios() {
     }
   };
 
-  // DELETE
+
   const eliminar = async (id) => {
     if (!window.confirm("¿Eliminar usuario?")) return;
     setError(null);

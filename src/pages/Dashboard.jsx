@@ -23,13 +23,13 @@ const Dashboard = () => {
   useEffect(() => {
   const token = localStorage.getItem("token");
 
-  // si no hay token, redirigimos al login
+
   if (!token) {
     window.location.href = "/login";
     return;
   }
 
-  // Cargar dashboard (resumen + estado + usuario)
+  
   fetch("https://proy-back-production.up.railway.app/api/dashboard", {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -75,7 +75,6 @@ const Dashboard = () => {
         </Link>
       </div>
 
-      {/* Cards de resumen */}
       <div className="dash-cards">
         <div className="card resumen">
           <h3>Total Expedientes</h3>
@@ -96,7 +95,7 @@ const Dashboard = () => {
       </div>
 
       <div className="dash-grid">
-        {/* Expedientes por Estado */}
+ 
         <div className="card">
           <h3>Expedientes por Estado</h3>
           <ResponsiveContainer width="100%" height={300}>
@@ -120,7 +119,7 @@ const Dashboard = () => {
           </ResponsiveContainer>
         </div>
 
-        {/* Expedientes por Usuario */}
+      
         <div className="card">
           <h3>Expedientes por Usuario</h3>
           <ResponsiveContainer width="100%" height={300}>
@@ -135,7 +134,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Expedientes por mes */}
+      
       <div className="card">
         <h3>Evolución de Expedientes por Mes</h3>
         <ResponsiveContainer width="100%" height={300}>

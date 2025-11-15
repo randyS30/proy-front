@@ -1,7 +1,7 @@
 import { useState } from "react";
 import './CSS/CrearExpediente.css';
 const API_BASE = "https://proy-back-production.up.railway.app/api/expedientes";
-// cambia esto a la URL de RENIEC en Railway
+
 const RENIEC_API = "https://proy-back-production.up.railway.app/api/reniec";
 
 export default function CrearExpediente() {
@@ -18,14 +18,12 @@ export default function CrearExpediente() {
   const [loading, setLoading] = useState(false);
 
   const token = localStorage.getItem("token");
-  const userId = localStorage.getItem("userId"); // el id del usuario logueado
-
+  const userId = localStorage.getItem("userId"); 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Consulta RENIEC (demandante o demandado)
   const consultarReniec = async (tipo) => {
     const doc =
       tipo === "demandante"
@@ -57,7 +55,7 @@ export default function CrearExpediente() {
           }));
         }
       } else {
-        alert("⚠️ No se encontró en RENIEC, completa los datos manualmente.");
+        alert(" No se encontró en RENIEC, completa los datos manualmente.");
       }
     } catch (err) {
       console.error("Error RENIEC:", err);
@@ -66,7 +64,6 @@ export default function CrearExpediente() {
     }
   };
 
-  // Genera EXP-AÑO-0000
   const generarNumeroExpediente = () => {
     const year = new Date().getFullYear();
     const rand = Math.floor(Math.random() * 10000)
@@ -98,7 +95,7 @@ export default function CrearExpediente() {
       const body = {
         ...formData,
         numero_expediente,
-        creado_por: userId, // aquí automáticamente
+        creado_por: userId,
       };
 
       const res = await fetch(API_BASE, {

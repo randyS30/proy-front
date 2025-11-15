@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate} from "react-router-dom";
+
 import "./CSS/Perfil.css";
 
 const API_BASE = "https://proy-back-production.up.railway.app/api/usuarios";
@@ -53,6 +54,17 @@ export default function Perfil() {
   const [error, setError] = useState(null);
   const token = localStorage.getItem("token");
 
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    sessionStorage.removeItem("justLoggedIn"); 
+
+    
+    navigate("/");
+  };
   const fetchProfile = async () => {
     if (!token) {
       if (!profile) setError("No hay sesión activa. Inicia sesión.");
@@ -163,6 +175,14 @@ export default function Perfil() {
               </dl>
                 <div className="perfil-actions">
                 <Link to="/expedientes" className="perfil-btn-primary">Mis Expedientes</Link>
+                <div className="perfil-actions">
+                    <Link to="/expedientes" className="perfil-btn-primary">Mis Expedientes</Link>
+                    
+
+                    <button onClick={handleLogout} className="perfil-btn-secondary">
+                      Cerrar Sesión
+                    </button>
+                  </div>
                 
               </div>
               

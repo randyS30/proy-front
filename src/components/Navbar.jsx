@@ -6,7 +6,7 @@ export default function Navbar() {
       <h1>Sistema Judicial</h1>
 
       <div className="navbar-links"> 
-        <Link to="/inicio">Inicio</Link>
+        <Link to="/dashboard">Inicio</Link>
         <Link to="/expedientes">Expedientes</Link>
         <Link to="/usuarios">Usuarios</Link>
         <Link to="/reportes">Reportes</Link>
