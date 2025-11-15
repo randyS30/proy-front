@@ -175,17 +175,10 @@ export default function Perfil() {
               </dl>
                 <div className="perfil-actions">
                 <Link to="/expedientes" className="perfil-btn-primary">Mis Expedientes</Link>
-                <div className="perfil-actions">
-                    <Link to="/expedientes" className="perfil-btn-primary">Mis Expedientes</Link>
-                    
-
-                    <button onClick={handleLogout} className="perfil-btn-secondary">
+                    <button onClick={handleLogout} className="perfil-btn-primary">
                       Cerrar Sesión
-                    </button>
-                  </div>
-                
-              </div>
-              
+                    </button>              
+              </div>           
             </div>
           </div>
         )}
