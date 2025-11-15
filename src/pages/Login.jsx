@@ -23,8 +23,11 @@ export default function Login() {
         throw new Error(data.message || "Credenciales inválidas");
       }
 
+
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
+      
+      sessionStorage.setItem("justLoggedIn", "true"); 
 
       alert(`Bienvenido ${data.user.nombre}`);
 
@@ -36,14 +39,12 @@ export default function Login() {
 
   return (
     <div className="login-form-container">
-      {/* Columna de la izquierda para el texto y el logo */}
       <div className="login-content-left">
         <h1>Sistema Judicial</h1>
         <img src="/src/img/logos.png" alt="Logo de Sistema Judicial" />
          <p>Te ayuda a gestionar y optimizar tus procesos legales de forma eficiente.</p>
       </div>
 
-      {/* Columna de la derecha para el formulario */}
       <div className="login-form-right">
         <div className="login-form-card">
           <h1 className="login-form-heading">

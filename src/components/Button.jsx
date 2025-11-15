@@ -4,7 +4,7 @@ import "./Button.css";
 export default function Button({
   children,
   type = "button",
-  variant = "primary", // "primary" | "success" | "danger" | "secondary"
+  variant = "primary", 
   loading = false,
   disabled = false,
   fullWidth = false,

@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Outlet, useNavigate, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
+
 import Modal from "../components/Modal.jsx"; 
 
 const API = "https://proy-back-production.up.railway.app";
 
-// Componente pequeño para el item de la alerta
+
 function AlertaItem({ alerta, onVerClick }) {
   const hoy = new Date();
-  hoy.setHours(0, 0, 0, 0); // Normalizar a medianoche
+  hoy.setHours(0, 0, 0, 0); 
   const fechaEvento = new Date(alerta.fecha_evento);
-  // El split y join es para corregir la zona horaria (un truco común)
+
   const fechaEventoUTC = new Date(fechaEvento.toISOString().split('T')[0]);
 
   const esVencido = fechaEventoUTC < hoy;
@@ -41,20 +42,14 @@ export default function MainLayout() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Al cargar el layout principal, buscamos las alertas
-    const fetchAlertas = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        navigate("/"); // Si no hay token, fuera
-        return;
-      }
-
+ 
+    const fetchAlertas = async (token) => {
       try {
         const res = await fetch(`${API}/api/alertas`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         
-        if (res.status === 401) { // Si el token expiró
+        if (res.status === 401) { 
           localStorage.removeItem("token");
           navigate("/");
           return;
@@ -63,16 +58,33 @@ export default function MainLayout() {
         const data = await res.json();
         if (data.success && data.alertas.length > 0) {
           setAlertas(data.alertas);
-          setShowAlertaModal(true); // ¡Abrimos el modal!
+          setShowAlertaModal(true); 
         }
       } catch (err) {
         console.error("Error cargando alertas:", err);
       }
     };
 
-    // Llamamos a la función solo una vez
-    fetchAlertas();
-  }, [navigate]); // navigate se incluye como dependencia
+ 
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/");
+      return;
+    }
+
+  
+    const justLoggedIn = sessionStorage.getItem("justLoggedIn");
+
+   
+    if (justLoggedIn === "true") {
+
+      sessionStorage.removeItem("justLoggedIn");
+      
+      fetchAlertas(token);
+    }
+
+
+  }, [navigate]); 
 
   return (
     <>
@@ -81,9 +93,7 @@ export default function MainLayout() {
         <Outlet /> 
       </div>
 
-      {/* =================================== */}
-      {/* ¡AQUÍ ESTÁ EL NUEVO MODAL DE ALERTAS! */}
-      {/* =================================== */}
+
       <Modal 
         open={showAlertaModal} 
         onClose={() => setShowAlertaModal(false)} 
@@ -99,7 +109,6 @@ export default function MainLayout() {
               key={alerta.evento_id} 
               alerta={alerta} 
               onVerClick={() => {
-                // Al hacer clic en "Ver", cerramos el modal y navegamos al expediente
                 setShowAlertaModal(false);
                 navigate(`/expedientes/${alerta.expediente_id}`);
               }}

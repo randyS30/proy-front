@@ -12,7 +12,7 @@ import '../src/Index.css';
 import MainLayout from "./layouts/MainLayout";
 import ExpedienteDetalle from "./pages/ExpedienteDetalle.jsx";
 import ExpedientesList from "./pages/ExpedientesLista.jsx";
-import { ExpedienteProvider } from "./layouts/ExpedienteContext.jsx"; // Importa el proveedor
+import { ExpedienteProvider } from "./layouts/ExpedienteContext.jsx"; 
 import Perfil from "./pages/Perfil.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
